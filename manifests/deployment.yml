@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "streamer-e24b"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "streamer-e24b"
+  template:
+    metadata:
+      labels:
+        app: "streamer-e24b"
+    spec:
+      containers:
+        - name: "streamer-e24b"
+          image: "castnestnodesteamer.azurecr.io/streamer"
+          ports:
+          - containerPort: 1935
