@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: "streamer-e24b"
+    labels:
+        app: "streamer-e24b"
+spec:
+    type: ClusterIP
+    ports:
+    - port: 1935
+      targetPort: 1935
+      protocol: TCP
+      name: http
+    selector:
+        app: "streamer-e24b"
