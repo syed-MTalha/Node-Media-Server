@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+    name: "streamer-e24b"
+    labels:
+        app: "streamer-e24b"
+    annotations:
+        kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+    rules:
+        - host: castneststearmers-streamer-e24b.afb3df3fa8474e3eb59e.eastus.aksapp.io
+          http:
+            paths:
+            - path: /
+              backend:
+                serviceName: "streamer-e24b"
+                servicePort: 1935
