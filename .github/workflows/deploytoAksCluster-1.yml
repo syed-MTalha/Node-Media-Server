@@ -1,0 +1,51 @@
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    
+    - uses: azure/docker-login@v1
+      with:
+        login-server: castnestnodesteamer.azurecr.io
+        username: ${{ secrets.acr_castnestnodesteamer_username }}
+        password: ${{ secrets.acr_castnestnodesteamer_password }}
+    
+    - name: Build and push image to ACR
+      id: build-image
+      run: |
+        docker build "$GITHUB_WORKSPACE/" -f  "Dockerfile" -t castnestnodesteamer.azurecr.io/streamer:${{ github.sha }} --label dockerfile-path=Dockerfile
+        docker push castnestnodesteamer.azurecr.io/streamer:${{ github.sha }}
+    
+    - uses: azure/k8s-set-context@v1
+      with:
+         kubeconfig: ${{ secrets.aks_streamer_kubeConfig }}
+      id: login
+    
+    - name: Create namespace
+      run: |
+        namespacePresent=`kubectl get namespace | grep origin | wc -l`
+        if [ $namespacePresent -eq 0 ]
+        then
+            echo `kubectl create namespace origin`
+        fi
+
+    - uses: azure/k8s-create-secret@v1
+      with:
+        namespace: origin
+        container-registry-url: castnestnodesteamer.azurecr.io
+        container-registry-username: ${{ secrets.acr_castnestnodesteamer_username }}
+        container-registry-password: ${{ secrets.acr_castnestnodesteamer_password }}
+        secret-name: streamerdockerauth
+       
+    - uses: azure/k8s-deploy@v1.2
+      with:
+        namespace: origin
+        manifests: |
+          manifests/deployment-1.yml
+          manifests/service-1.yml
+          manifests/ingress-1.yml
+        images: |
+          castnestnodesteamer.azurecr.io/streamer:${{ github.sha }}
+        imagepullsecrets: |
+          streamerdockerauth
