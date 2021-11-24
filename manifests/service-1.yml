@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: "streamer-0d11"
+    labels:
+        app: "streamer-0d11"
+spec:
+    type: ClusterIP
+    ports:
+    - port: 1935
+      targetPort: 1935
+      protocol: TCP
+      name: http
+    selector:
+        app: "streamer-0d11"
