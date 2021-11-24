@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "streamer-0d11"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "streamer-0d11"
+  template:
+    metadata:
+      labels:
+        app: "streamer-0d11"
+    spec:
+      containers:
+        - name: "streamer-0d11"
+          image: "castnestnodesteamer.azurecr.io/streamer"
+          ports:
+          - containerPort: 1935
