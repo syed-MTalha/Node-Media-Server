@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+    name: "streamer-0d11"
+    labels:
+        app: "streamer-0d11"
+    annotations:
+        kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+    rules:
+        - host: origin-streamer-0d11.afb3df3fa8474e3eb59e.eastus.aksapp.io
+          http:
+            paths:
+            - path: /
+              backend:
+                serviceName: "streamer-0d11"
+                servicePort: 1935
